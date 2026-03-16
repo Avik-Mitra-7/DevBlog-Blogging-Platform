@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-
 import {
   Box,
   styled,
@@ -16,7 +15,8 @@ import { API } from "../../service/api";
 const Container = styled(Box)(({ theme }) => ({
   margin: "50px 100px",
   [theme.breakpoints.down("md")]: {
-    margin: 0,
+    margin: "10px 0",
+    padding: "0 15px",
   },
 }));
 
@@ -26,27 +26,51 @@ const Image = styled("img")({
   objectFit: "cover",
 });
 
-const StyledFormControl = styled(FormControl)`
-  margin-top: 10px;
-  display: flex;
-  flex-direction: row;
-`;
+const StyledFormControl = styled(FormControl)(({ theme }) => ({
+  marginTop: "10px",
+  display: "flex",
+  flexDirection: "row",
+  alignItems: "center",
+  [theme.breakpoints.down("sm")]: {
+    flexDirection: "column",
+    alignItems: "stretch",
+    gap: "15px",
+  },
+}));
 
-const InputTextField = styled(InputBase)`
-  flex: 1;
-  margin: 0 30px;
-  font-size: 25px;
-`;
+const InputTextField = styled(InputBase)(({ theme }) => ({
+  flex: 1,
+  margin: "0 30px",
+  fontSize: "25px",
+  [theme.breakpoints.down("sm")]: {
+    margin: "0",
+    fontSize: "22px",
+    order: 2,
+    borderBottom: "1px solid #f0f0f0",
+    paddingBottom: "5px",
+  },
+}));
 
-const StyledTextArea = styled(TextareaAutosize)`
-  width: 100%;
-  border: none;
-  margin-top: 50px;
-  font-size: 18px;
-  &:focus-visible {
-    outline: none;
-  }
-`;
+const StyledButton = styled(Button)(({ theme }) => ({
+  [theme.breakpoints.down("sm")]: {
+    order: 1,
+    width: "50%",
+  },
+}));
+
+const StyledTextArea = styled(TextareaAutosize)(({ theme }) => ({
+  width: "100%",
+  border: "none",
+  marginTop: "50px",
+  fontSize: "18px",
+  padding: "10px",
+  outline: "none",
+  whiteSpace: "pre-line",
+  [theme.breakpoints.down("sm")]: {
+    marginTop: "20px",
+    fontSize: "16px",
+  },
+}));
 
 const initialPost = {
   title: "",
@@ -59,11 +83,8 @@ const initialPost = {
 
 const Update = () => {
   const navigate = useNavigate();
-
   const [post, setPost] = useState(initialPost);
   const [file, setFile] = useState("");
-  const [imageURL, setImageURL] = useState("");
-
   const { id } = useParams();
 
   const url =
@@ -77,7 +98,7 @@ const Update = () => {
       }
     };
     fetchData();
-  }, []);
+  }, [id]);
 
   useEffect(() => {
     const getImage = async () => {
@@ -88,8 +109,7 @@ const Update = () => {
 
         const response = await API.uploadFile(data);
         if (response.isSuccess) {
-          post.picture = response.data;
-          setImageURL(response.data);
+          setPost((prev) => ({ ...prev, picture: response.data }));
         }
       }
     };
@@ -97,8 +117,10 @@ const Update = () => {
   }, [file]);
 
   const updateBlogPost = async () => {
-    await API.updatePost(post);
-    navigate(`/details/${id}`);
+    let response = await API.updatePost(post);
+    if (response.isSuccess) {
+      navigate(`/details/${id}`);
+    }
   };
 
   const handleChange = (e) => {
@@ -111,7 +133,7 @@ const Update = () => {
 
       <StyledFormControl>
         <label htmlFor="fileInput">
-          <Add fontSize="large" color="action" />
+          <Add fontSize="large" color="action" style={{ cursor: "pointer" }} />
         </label>
         <input
           type="file"
@@ -125,17 +147,17 @@ const Update = () => {
           name="title"
           placeholder="Title"
         />
-        <Button
+        <StyledButton
           onClick={() => updateBlogPost()}
           variant="contained"
           color="primary"
         >
           Update
-        </Button>
+        </StyledButton>
       </StyledFormControl>
 
       <StyledTextArea
-        rowsMin={5}
+        minRows={5}
         placeholder="Tell your story..."
         name="description"
         onChange={(e) => handleChange(e)}

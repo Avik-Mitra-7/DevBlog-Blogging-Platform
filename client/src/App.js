@@ -9,7 +9,6 @@ import {
   Outlet,
 } from "react-router-dom";
 
-//components
 import DataProvider from "./context/DataProvider";
 import Header from "./components/header/Header";
 import Home from "./components/home/Home";

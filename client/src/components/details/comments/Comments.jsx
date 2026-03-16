@@ -1,17 +1,28 @@
 import { useState, useEffect, useContext } from "react";
-import { Box, TextareaAutosize, Button, styled } from "@mui/material";
+import {
+  Box,
+  TextareaAutosize,
+  Button,
+  styled,
+  Typography,
+} from "@mui/material";
 
 import { DataContext } from "../../../context/DataProvider";
-
 import { API } from "../../../service/api";
 
-//components
+// components
 import Comment from "./Comment";
 
-const Container = styled(Box)`
-  margin-top: 100px;
-  display: flex;
-`;
+const Container = styled(Box)(({ theme }) => ({
+  marginTop: "100px",
+  display: "flex",
+  [theme.breakpoints.down("sm")]: {
+    flexDirection: "column",
+    alignItems: "center",
+    gap: "10px",
+    marginTop: "40px",
+  },
+}));
 
 const Image = styled("img")({
   width: 50,
@@ -19,11 +30,26 @@ const Image = styled("img")({
   borderRadius: "50%",
 });
 
-const StyledTextArea = styled(TextareaAutosize)`
-  height: 100px !important;
-  width: 100%;
-  margin: 0 20px;
-`;
+const StyledTextArea = styled(TextareaAutosize)(({ theme }) => ({
+  minHeight: "100px",
+  width: "100%",
+  margin: "0 20px",
+  padding: "10px",
+  fontSize: "16px",
+  outline: "none",
+  borderRadius: "5px",
+  border: "1px solid #d3d3d3",
+  [theme.breakpoints.down("sm")]: {
+    margin: "0",
+  },
+}));
+
+const PostButton = styled(Button)(({ theme }) => ({
+  height: 40,
+  [theme.breakpoints.down("sm")]: {
+    width: "50%",
+  },
+}));
 
 const initialValue = {
   name: "",
@@ -43,13 +69,19 @@ const Comments = ({ post }) => {
 
   useEffect(() => {
     const getData = async () => {
-      const response = await API.getAllComments(post._id);
-      if (response.isSuccess) {
-        setComments(response.data);
+      if (post && post._id) {
+        try {
+          const response = await API.getAllComments(post._id);
+          if (response.isSuccess) {
+            setComments(response.data);
+          }
+        } catch (error) {
+          console.error("Error fetching comments:", error);
+        }
       }
     };
     getData();
-  }, [toggle, post]);
+  }, [post._id, toggle]);
 
   const handleChange = (e) => {
     setComment({
@@ -61,9 +93,28 @@ const Comments = ({ post }) => {
   };
 
   const addComment = async () => {
-    await API.newComment(comment);
-    setComment(initialValue);
-    setToggle((prev) => !prev);
+    // TOPPER STOP: Prevent empty submissions or missing auth data
+    if (!comment.comments.trim() || !account.username || !post._id) {
+      console.warn("Incomplete comment data. Submission blocked.");
+      return;
+    }
+
+    const commentPayload = {
+      name: account.username,
+      postId: post._id,
+      comments: comment.comments,
+      date: new Date(),
+    };
+
+    try {
+      let response = await API.newComment(commentPayload);
+      if (response.isSuccess) {
+        setComment({ ...initialValue, comments: "" }); // Clear field
+        setToggle((prev) => !prev); // Refresh list
+      }
+    } catch (error) {
+      console.error("API Call Failed:", error);
+    }
   };
 
   return (
@@ -71,27 +122,38 @@ const Comments = ({ post }) => {
       <Container>
         <Image src={url} alt="dp" />
         <StyledTextArea
-          rowsMin={5}
+          minRows={5}
           placeholder="what's on your mind?"
           onChange={(e) => handleChange(e)}
           value={comment.comments}
         />
-        <Button
+        <PostButton
           variant="contained"
           color="primary"
           size="medium"
-          style={{ height: 40 }}
-          onClick={(e) => addComment(e)}
+          onClick={() => addComment()}
         >
           Post
-        </Button>
+        </PostButton>
       </Container>
-      <Box>
-        {comments &&
-          comments.length > 0 &&
-          comments.map((comment) => (
-            <Comment comment={comment} setToggle={setToggle} />
-          ))}
+      <Box style={{ marginTop: "20px" }}>
+        {comments && comments.length > 0 ? (
+          [...comments]
+            .reverse()
+            .map((comment) => (
+              <Comment
+                key={comment._id}
+                comment={comment}
+                setToggle={setToggle}
+              />
+            ))
+        ) : (
+          <Typography
+            style={{ color: "#878787", marginTop: "30px", textAlign: "center" }}
+          >
+            No comments yet. Be the first to share your thoughts!
+          </Typography>
+        )}
       </Box>
     </Box>
   );

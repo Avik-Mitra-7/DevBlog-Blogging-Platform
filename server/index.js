@@ -4,7 +4,6 @@ import cors from "cors";
 import bodyParser from "body-parser";
 import mongoose from "mongoose";
 
-// components
 import Connection from "./database/db.js";
 import Router from "./routes/route.js";
 
@@ -12,7 +11,6 @@ dotenv.config();
 
 const app = express();
 
-// Configure CORS for your React frontend
 app.use(
   cors({
     origin: "http://localhost:3000",
@@ -21,9 +19,19 @@ app.use(
 
 app.use(bodyParser.json({ extended: true }));
 app.use(bodyParser.urlencoded({ extended: true }));
+
+app.use((err, req, res, next) => {
+  if (err instanceof SyntaxError && err.status === 400 && "body" in err) {
+    console.error("Bad JSON received:", err.message);
+    return res
+      .status(400)
+      .json({ error: "Invalid JSON payload. Check your formatting!" });
+  }
+  next();
+});
+
 app.use("/", Router);
 
-// Suppress the Mongoose warning
 mongoose.set("strictQuery", false);
 
 const PORT = process.env.PORT || 3001;

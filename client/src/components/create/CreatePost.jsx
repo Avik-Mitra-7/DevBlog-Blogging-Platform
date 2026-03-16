@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useContext } from "react";
-
 import {
   styled,
   Box,
@@ -20,7 +19,8 @@ import { categories } from "../../constants/data";
 const Container = styled(Box)(({ theme }) => ({
   margin: "50px 100px",
   [theme.breakpoints.down("md")]: {
-    margin: 0,
+    margin: "10px 0",
+    padding: "0 15px",
   },
 }));
 
@@ -30,35 +30,62 @@ const Image = styled("img")({
   objectFit: "cover",
 });
 
-const StyledFormControl = styled(FormControl)`
-  margin-top: 10px;
-  display: flex;
-  flex-direction: row;
-  align-items: center; /* Ensures items stay aligned in the row */
-`;
+const StyledFormControl = styled(FormControl)(({ theme }) => ({
+  marginTop: "10px",
+  display: "flex",
+  flexDirection: "row",
+  alignItems: "center",
+  [theme.breakpoints.down("sm")]: {
+    flexDirection: "column",
+    alignItems: "stretch",
+    gap: "15px",
+  },
+}));
 
-const InputTextField = styled(InputBase)`
-  flex: 1;
-  margin: 0 30px;
-  font-size: 25px;
-`;
+const InputTextField = styled(InputBase)(({ theme }) => ({
+  flex: 1,
+  margin: "0 30px",
+  fontSize: "25px",
+  [theme.breakpoints.down("sm")]: {
+    margin: "0",
+    fontSize: "22px",
+    order: 3,
+    borderBottom: "1px solid #f0f0f0",
+    paddingBottom: "5px",
+  },
+}));
 
-const StyledSelect = styled(Select)`
-  margin-right: 20px;
-  height: 40px;
-  min-width: 150px;
-  border-radius: 8px;
-`;
+const StyledSelect = styled(Select)(({ theme }) => ({
+  marginRight: "20px",
+  height: "40px",
+  minWidth: "150px",
+  borderRadius: "8px",
+  [theme.breakpoints.down("sm")]: {
+    marginRight: "0",
+    width: "100%",
+    order: 1,
+  },
+}));
 
-const Textarea = styled(TextareaAutosize)`
-  width: 100%;
-  border: none;
-  margin-top: 50px;
-  font-size: 18px;
-  &:focus-visible {
-    outline: none;
-  }
-`;
+const StyledButton = styled(Button)(({ theme }) => ({
+  [theme.breakpoints.down("sm")]: {
+    order: 2,
+    width: "50%",
+  },
+}));
+
+const Textarea = styled(TextareaAutosize)(({ theme }) => ({
+  width: "100%",
+  border: "none",
+  marginTop: "50px",
+  fontSize: "18px",
+  padding: "10px",
+  outline: "none",
+  [theme.breakpoints.down("sm")]: {
+    marginTop: "20px",
+    fontSize: "16px",
+  },
+}));
 
 const initialPost = {
   title: "",
@@ -114,7 +141,6 @@ const CreatePost = () => {
       <Image src={url} alt="post" />
 
       <StyledFormControl>
-        {/* Fixed: Label htmlFor matches input ID to trigger file picker */}
         <label htmlFor="fileInput">
           <Add fontSize="large" color="action" style={{ cursor: "pointer" }} />
         </label>
@@ -131,7 +157,6 @@ const CreatePost = () => {
           placeholder="Title"
         />
 
-        {/* The Category Dropdown Selector */}
         <StyledSelect
           label="Category"
           name="categories"
@@ -146,9 +171,13 @@ const CreatePost = () => {
           ))}
         </StyledSelect>
 
-        <Button onClick={() => savePost()} variant="contained" color="primary">
+        <StyledButton
+          onClick={() => savePost()}
+          variant="contained"
+          color="primary"
+        >
           Publish
-        </Button>
+        </StyledButton>
       </StyledFormControl>
 
       <Textarea

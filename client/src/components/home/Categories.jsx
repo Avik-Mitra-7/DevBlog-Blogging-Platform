@@ -16,6 +16,10 @@ const StyledPaper = styled(Paper)`
   border-radius: 15px;
   overflow: hidden;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+
+  @media (max-width: 600px) {
+    margin: 5px;
+  }
 `;
 
 const StyledTable = styled(Table)`
@@ -23,14 +27,23 @@ const StyledTable = styled(Table)`
 `;
 
 const StyledButton = styled(Button)`
-  margin: 20px;
+  margin: 20px auto;
+  display: block;
   width: 85%;
-  background: #2874f0; 
+  background: #2874f0;
   color: #fff;
   text-transform: none;
   font-weight: 600;
   border-radius: 8px;
   transition: all 0.3s ease;
+
+  @media (max-width: 600px) {
+    width: 150px; /* Shorter width for mobile */
+    margin: 10px auto; /* Tighter spacing */
+    padding: 5px 0; /* Slimmer height */
+    font-size: 13px; /* Compact font */
+  }
+
   &:hover {
     background: #1a5bb8;
     transform: translateY(-2px);
@@ -52,11 +65,20 @@ const CategoryCell = styled(TableCell)`
   transition: all 0.3s ease;
   border-bottom: 1px solid #f0f0f0;
 
+  @media (max-width: 600px) {
+    padding: 10px 15px; /* Shorter cell height for mobile */
+    font-size: 0.9rem; /* Smaller font */
+  }
+
   &:hover {
     background-color: #f1f3f6;
-    padding-left: 30px; /* Fancy 'push' effect */
+    padding-left: 30px;
     color: #2874f0;
     cursor: pointer;
+
+    @media (max-width: 600px) {
+      padding-left: 20px;
+    }
   }
 `;
 

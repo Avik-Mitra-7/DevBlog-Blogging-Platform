@@ -1,16 +1,22 @@
 import React, { useState, useEffect, useContext } from "react";
-
 import { TextField, Box, Button, Typography, styled } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-
 import { API } from "../../service/api";
 import { DataContext } from "../../context/DataProvider";
 
-const Component = styled(Box)`
-  width: 400px;
-  margin: auto;
-  box-shadow: 5px 2px 5px 2px rgb(0 0 0/ 0.6);
-`;
+const Component = styled(Box)(({ theme }) => ({
+  width: "400px",
+  margin: "auto",
+  marginTop: "64px",
+  boxShadow: "5px 2px 5px 2px rgb(0 0 0 / 0.3)",
+  borderRadius: "10px",
+  backgroundColor: "#fff",
+
+  [theme.breakpoints.down("sm")]: {
+    width: "90%",
+    marginTop: "40px",
+  },
+}));
 
 const Image = styled("img")({
   width: 100,
@@ -38,6 +44,9 @@ const LoginButton = styled(Button)`
   color: #fff;
   height: 48px;
   border-radius: 2px;
+  &:hover {
+    background: #e65a17;
+  }
 `;
 
 const SignupButton = styled(Button)`
@@ -55,11 +64,11 @@ const Text = styled(Typography)`
 `;
 
 const Error = styled(Typography)`
-  font-size: 10px;
+  font-size: 12px;
   color: #ff6161;
-  line-height: 0;
   margin-top: 10px;
   font-weight: 600;
+  text-align: center;
 `;
 
 const loginInitialValues = {
@@ -86,8 +95,8 @@ const Login = ({ isUserAuthenticated }) => {
     "https://www.sesta.it/wp-content/uploads/2021/03/logo-blog-sesta-trasparente.png";
 
   useEffect(() => {
-    showError(false);
-  }, [login]);
+    showError("");
+  }, [login, signup]);
 
   const onValueChange = (e) => {
     setLogin({ ...login, [e.target.name]: e.target.value });
@@ -101,7 +110,6 @@ const Login = ({ isUserAuthenticated }) => {
     let response = await API.userLogin(login);
     if (response.isSuccess) {
       showError("");
-
       sessionStorage.setItem(
         "accessToken",
         `Bearer ${response.data.accessToken}`,
@@ -114,12 +122,11 @@ const Login = ({ isUserAuthenticated }) => {
         name: response.data.name,
         username: response.data.username,
       });
-
       isUserAuthenticated(true);
       setLogin(loginInitialValues);
       navigate("/");
     } else {
-      showError("Something went wrong! please try again later");
+      showError("Invalid username or password! Please try again.");
     }
   };
 
@@ -130,7 +137,7 @@ const Login = ({ isUserAuthenticated }) => {
       setSignup(signupInitialValues);
       toggleAccount("login");
     } else {
-      showError("Something went wrong! please try again later");
+      showError("Something went wrong! Please try again later.");
     }
   };
 
@@ -147,28 +154,24 @@ const Login = ({ isUserAuthenticated }) => {
             <TextField
               variant="standard"
               value={login.username}
-              onChange={(e) => onValueChange(e)}
+              onChange={onValueChange}
               name="username"
               label="Enter Username"
             />
             <TextField
               variant="standard"
               value={login.password}
-              onChange={(e) => onValueChange(e)}
+              onChange={onValueChange}
               name="password"
               label="Enter Password"
+              type="password"
             />
-
             {error && <Error>{error}</Error>}
-
-            <LoginButton variant="contained" onClick={() => loginUser()}>
+            <LoginButton variant="contained" onClick={loginUser}>
               Login
             </LoginButton>
             <Text style={{ textAlign: "center" }}>OR</Text>
-            <SignupButton
-              onClick={() => toggleSignup()}
-              style={{ marginBottom: 50 }}
-            >
+            <SignupButton onClick={toggleSignup} style={{ marginBottom: 50 }}>
               Create an account
             </SignupButton>
           </Wrapper>
@@ -176,26 +179,30 @@ const Login = ({ isUserAuthenticated }) => {
           <Wrapper>
             <TextField
               variant="standard"
-              onChange={(e) => onInputChange(e)}
+              value={signup.name}
+              onChange={onInputChange}
               name="name"
               label="Enter Name"
             />
             <TextField
               variant="standard"
-              onChange={(e) => onInputChange(e)}
+              value={signup.username}
+              onChange={onInputChange}
               name="username"
               label="Enter Username"
             />
             <TextField
               variant="standard"
-              onChange={(e) => onInputChange(e)}
+              value={signup.password}
+              onChange={onInputChange}
               name="password"
               label="Enter Password"
+              type="password"
             />
-
-            <SignupButton onClick={() => signupUser()}>Signup</SignupButton>
+            {error && <Error>{error}</Error>}
+            <SignupButton onClick={signupUser}>Signup</SignupButton>
             <Text style={{ textAlign: "center" }}>OR</Text>
-            <LoginButton variant="contained" onClick={() => toggleSignup()}>
+            <LoginButton variant="contained" onClick={toggleSignup}>
               Already have an account
             </LoginButton>
           </Wrapper>

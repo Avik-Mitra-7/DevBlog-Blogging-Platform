@@ -1,56 +1,113 @@
-import { Box, styled, Typography, Link } from "@mui/material";
+import { Box, styled, Typography, Link, Stack } from "@mui/material";
 import { GitHub, LinkedIn, Email } from "@mui/icons-material";
 
-const Wrapper = styled(Box)`
-  padding: 80px 20px;
-  text-align: center;
-  background: #fdfdfd;
-  min-height: 80vh;
-`;
+const Wrapper = styled(Box)(({ theme }) => ({
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
+  minHeight: "100vh",
+  padding: "20px",
+  background: "#f8f9fa",
+  marginTop: "64px",
+  [theme.breakpoints.down("sm")]: {
+    marginTop: "40px",
+  },
+}));
 
-const ContactLink = styled(Link)`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  margin-top: 25px;
-  font-size: 1.2rem;
-  text-decoration: none;
-  color: #333;
-  &:hover {
-    color: #2874f0;
-  }
-`;
+const ContactCard = styled(Box)(({ theme }) => ({
+  background: "#ffffff",
+  padding: "60px 40px",
+  borderRadius: "30px",
+  boxShadow: "0 20px 60px rgba(0, 0, 0, 0.05)",
+  textAlign: "center",
+  maxWidth: "450px",
+  width: "100%",
+  border: "1px solid #f0f0f0",
+  [theme.breakpoints.down("sm")]: {
+    padding: "40px 20px",
+  },
+}));
+
+const ContactButton = styled(Link)(({ theme }) => ({
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  gap: "15px",
+  marginTop: "18px",
+  padding: "16px",
+  fontSize: "1rem",
+  fontWeight: "600",
+  textDecoration: "none",
+  borderRadius: "15px",
+  transition: "all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)",
+  border: "1px solid #eee",
+  color: "#444",
+  background: "#fff",
+
+  "&:hover": {
+    transform: "scale(1.05)",
+    boxShadow: "0 10px 20px rgba(0,0,0,0.08)",
+    borderColor: "#2874f0",
+    color: "#2874f0",
+  },
+
+  [theme.breakpoints.down("sm")]: {
+    padding: "12px",
+    fontSize: "0.95rem",
+  },
+}));
 
 const Contact = () => {
   return (
     <Wrapper>
-      <Typography variant="h3" fontWeight="bold">
-        Getting in touch is easy!
-      </Typography>
-      <Typography variant="h6" color="textSecondary" sx={{ mt: 2 }}>
-        Reach out to me through any of the following platforms:
-      </Typography>
-
-      <Box sx={{ mt: 5 }}>
-        <ContactLink
-          href="mailto:avikmitra.officially@gmail.com"
-          target="_blank"
+      <ContactCard>
+        <Typography
+          variant="h3"
+          sx={{
+            fontWeight: 900,
+            fontSize: { xs: "1.7rem", sm: "2.3rem" },
+            color: "#1a1a1a",
+            mb: 1,
+          }}
         >
-          <Email color="primary" /> Email
-        </ContactLink>
+          Getting in touch is easy!
+        </Typography>
 
-        <ContactLink
-          href="www.linkedin.com/in/avik-mitra-74b965370"
-          target="_blank"
+        <Typography
+          variant="body1"
+          sx={{
+            color: "#777",
+            fontSize: { xs: "0.9rem", sm: "1rem" },
+            mb: 4,
+          }}
         >
-          <LinkedIn color="primary" /> LinkedIn Profile
-        </ContactLink>
+          Feel free to reach out for collaborations or just a friendly tech
+          talk.
+        </Typography>
 
-        <ContactLink href="https://github.com/Avik-Mitra-7" target="_blank">
-          <GitHub color="primary" /> GitHub Portfolio
-        </ContactLink>
-      </Box>
+        <Stack spacing={0}>
+          <ContactButton
+            href="mailto:avikmitra.officially@gmail.com"
+            target="_blank"
+          >
+            <Email sx={{ color: "#ea4335", fontSize: "1.4rem" }} />
+            Email Me
+          </ContactButton>
+
+          <ContactButton
+            href="https://www.linkedin.com/in/avik-mitra-74b965370"
+            target="_blank"
+          >
+            <LinkedIn sx={{ color: "#0077b5", fontSize: "1.4rem" }} />
+            LinkedIn Profile
+          </ContactButton>
+
+          <ContactButton href="https://github.com/Avik-Mitra-7" target="_blank">
+            <GitHub sx={{ color: "#333", fontSize: "1.4rem" }} />
+            GitHub Portfolio
+          </ContactButton>
+        </Stack>
+      </ContactCard>
     </Wrapper>
   );
 };

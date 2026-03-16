@@ -1,5 +1,6 @@
 import express from "express";
 
+// Controllers
 import {
   createPost,
   updatePost,
@@ -23,20 +24,21 @@ import {
   createNewToken,
 } from "../controller/jwt-controller.js";
 
+// Utils
 import upload from "../utils/upload.js";
 
 const router = express.Router();
 
+// User Routes
 router.post("/login", loginUser);
 router.post("/signup", singupUser);
 router.post("/logout", logoutUser);
-
 router.post("/token", createNewToken);
 
+// Post Routes
 router.post("/create", authenticateToken, createPost);
 router.put("/update/:id", authenticateToken, updatePost);
 router.delete("/delete/:id", authenticateToken, deletePost);
-
 router.get("/post/:id", authenticateToken, getPost);
 router.get("/posts", authenticateToken, getAllPosts);
 
@@ -45,6 +47,7 @@ router.get("/file/:filename", getImage);
 
 router.post("/comment/new", authenticateToken, newComment);
 router.get("/comments/:id", authenticateToken, getComments);
+
 router.delete("/comment/delete/:id", authenticateToken, deleteComment);
 
 export default router;
