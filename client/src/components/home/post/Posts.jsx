@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Grid, Box, styled } from "@mui/material";
+import { Grid, Box, } from "@mui/material";
 import { Link, useSearchParams } from "react-router-dom";
 import { API } from "../../../service/api";
 import Post from "./Post";
